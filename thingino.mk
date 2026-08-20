@@ -432,6 +432,8 @@ ifeq ($(BR2_TARGET_UBOOT_BOARDNAME),)
 	# SOC_UBOOT is resolved for the flash type by the soc/<vendor>/ file.
 	UBOOT_BOARDNAME := $(or $(SOC_UBOOT),unknown)
 	BR2_TARGET_UBOOT_BOARDNAME := $(UBOOT_BOARDNAME)
+else
+	UBOOT_BOARDNAME := $(patsubst "%",%,$(BR2_TARGET_UBOOT_BOARDNAME))
 endif
 
 # Flash type used for U-Boot defconfig lookup
@@ -480,12 +482,14 @@ endif
 export UBOOT_FLASH_CONTROLLER
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME),)
-	BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME := "u-boot-with-spl-lzma.bin"
+	BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME := "$(or $(SOC_UBOOT_BIN),u-boot-with-spl-lzma.bin)"
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_BOARD_DEFCONFIG),)
 	UBOOT_DEFCONFIG := $(or $(SOC_UBOOT),unknown)
 	BR2_TARGET_UBOOT_BOARD_DEFCONFIG := $(UBOOT_DEFCONFIG)
+else
+	UBOOT_DEFCONFIG := $(patsubst "%",%,$(BR2_TARGET_UBOOT_BOARD_DEFCONFIG))
 endif
 
 ifeq ($(SOC_MODEL),t10l)
